@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    	<title>修改密码 Cprices</title>
+    	<link rel="SHORTCUT ICON" href= "static/img/head-logo.png"/>
+        <link rel="stylesheet" href="/static/css/accounts.css" />
+        <link rel="stylesheet" href="/static/css/jquery.mmenu.all.css" />
+        <link rel="stylesheet" href="/static/css/menu.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/validationEngine.bootstrap.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/validationEngine.jquery.css" />
+        <script type="text/javascript">
+			Cufon.replace('h1',{ textShadow: '1px 1px #fff'});
+			Cufon.replace('h2',{ textShadow: '1px 1px #fff'});
+			Cufon.replace('.back');
+		</script>
+    </head>
+    <body>
+		<div id="header">
+            <a href="#menu-left"></a>
+            Cprices
+        </div>
+        <nav id="menu-left">
+            <ul>
+                {% if user.is_authenticated %}
+                <li style="margin-top:80px"><a href="/lists" style="text-align:center">收&nbsp;&nbsp;&nbsp;&nbsp;藏</a></li>
+                <li><a href="/changepasswd" style="text-align:center">修&nbsp;改&nbsp;密&nbsp;码</a></li>
+                <li><a href="/" style="text-align:center">搜&nbsp;&nbsp;&nbsp;&nbsp;索</a></li>
+                <li><a href="/logout" style="text-align:center">退&nbsp;出&nbsp;登&nbsp;录</a></li>
+                {% else %}
+                <li style="margin-top:80px"><a href="/login" style="text-align:center">登&nbsp;&nbsp;&nbsp;&nbsp;录</a></li>
+                <li><a href="/register" style="text-align:center">注&nbsp;&nbsp;&nbsp;&nbsp;册</a></li>
+                <li><a href="/" style="text-align:center">搜&nbsp;&nbsp;&nbsp;&nbsp;索</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+		<div class="wrapper">
+			<div id="form_wrapper" class="form_wrapper" style="margin-top:30px">
+				<form id="pwd-form" class="login active" action="/changepasswd/"  method="post">  {% csrf_token %}
+					<h3 style="padding-top:12px">Change Password</h3>
+					<div>
+						<label>旧密码:
+						{% if info %}
+							<div class="errors">{{ info }}</div>
+						{% endif %}
+						</label>
+						<input  class="validate[required]" type="password" name="oldpwd" />
+					</div>
+					<div>
+						<label>新密码: </label>
+						<input id="newpwd" class="validate[required,minSize[6],maxSize[30]]" type="password" name="newpwd" />
+					</div>
+					<div>
+						<label>新密码确认: </label>
+						<input class="validate[required,equals[newpwd]]" name="newpwd-re" type="password"/>
+						<span class="error">This is an error</span>
+					</div>
+					<div class="bottom">
+						<button type="submit">修&nbsp;改&nbsp;密&nbsp;码</button>
+						<div class="clear"></div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<!-- The JavaScript -->
+		<script type="text/javascript" src="/static/js/jquery-1.11.0.min.js" ></script>
+		<script type="text/javascript" src="/static/languages/zh-cn/jquery.validationEngine.lang.js" ></script>
+		<script type="text/javascript" src="/static/js/jquery.validationEngine.js" ></script>
+		<script src="/static/js/jquery.mmenu.min.all.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                $('nav#menu-left').mmenu({
+                    classes: 'mm-light'
+                });
+				$("#pwd-form").validationEngine('attach', {promptPosition : "bottomRight", scroll: false});
+			});
+        </script>
+    </body>
+</html>

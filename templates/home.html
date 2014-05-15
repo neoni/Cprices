@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+    <head>
+    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    	<title>Cprices</title>
+        <link rel="SHORTCUT ICON" href= "/static/img/head-logo.png"/>
+    	<link rel="stylesheet" href="/static/css/jquery.mmenu.all.css" />
+        <link rel="stylesheet" href="/static/css/menu.css" />
+    </head>
+
+    <body>
+        <div id="header">
+            <a href="#menu-left"></a>
+            Cprices
+        </div>
+        <nav id="menu-left">
+            <ul>
+                {% if user.is_authenticated %}
+                <li style="margin-top:80px"><a href="/lists" style="text-align:center">收&nbsp;&nbsp;&nbsp;&nbsp;藏</a></li>
+                <li><a href="/changepasswd" style="text-align:center">修&nbsp;改&nbsp;密&nbsp;码</a></li>
+                <li><a href="/" style="text-align:center">搜&nbsp;&nbsp;&nbsp;&nbsp;索</a></li>
+                <li><a href="/logout" style="text-align:center">退&nbsp;出&nbsp;登&nbsp;录</a></li>
+                {% else %}
+                <li style="margin-top:80px"><a href="/login" style="text-align:center">登&nbsp;&nbsp;&nbsp;&nbsp;录</a></li>
+                <li><a href="/register" style="text-align:center">注册</a></li>
+                <li><a href="/" style="text-align:center">搜索</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+
+    	<div id="content">
+            <center><img src="/static/img/ninja.gif" style="margin-top:80px"/></center>
+    		<form  action="/search/" method="get">
+                <center >
+                <div style="margin-top:50px; margin-right:130px; width: 600px;">
+                    <label class="radioc"><input name="filter" type="radio" value="all" checked=true />全部</label>
+                    <label class="radioc"><input name="filter" type="radio" value="amazon" />亚马逊 </label>
+                    <label class="radioc"><input name="filter" type="radio" value="dangdang" />当当</label>
+                    <label class="radioc"><input name="filter" type="radio" value="yhd" />1号店</label>
+                    <label class="radioc"><input name="filter" type="radio" value="taobao" />淘宝 </label>
+                </div></center>
+                <div id="searchbox">
+                    <input id="search" name="search" type="text" placeholder="关键字">
+                    <input id="submit" type="submit" value="查  询">
+                </div>
+            </form>
+        </div>
+
+        <script type="text/javascript" src="/static/js/jquery-1.11.0.min.js"></script>
+    	<script src="/static/js/jquery.mmenu.min.all.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                $('nav#menu-left').mmenu({
+                    classes: 'mm-light'
+                });
+            });
+        </script>
+    </body>
+</html>

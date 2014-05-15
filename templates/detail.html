@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Cprices</title>
+        <link rel="SHORTCUT ICON" href= "/static/img/head-logo.png"/>
+        <link rel="stylesheet" type="text/css" href="/static/css/results.css" />
+        <link rel="stylesheet" href="/static/css/jquery.mmenu.all.css" />
+        <link rel="stylesheet" href="/static/css/menu.css" />
+    <body>
+        <div id="header">
+            <a href="#menu-left"></a>
+            Cprices
+        </div>
+        <nav id="menu-left">
+            <ul>
+                {% if user.is_authenticated %}
+                <li style="margin-top:80px"><a href="/lists" style="text-align:center">收&nbsp;&nbsp;&nbsp;&nbsp;藏</a></li>
+                <li><a href="/changepasswd" style="text-align:center">修&nbsp;改&nbsp;密&nbsp;码</a></li>
+                <li><a href="/" style="text-align:center">搜&nbsp;&nbsp;&nbsp;&nbsp;索</a></li>
+                <li><a href="/logout" style="text-align:center">退&nbsp;出&nbsp;登&nbsp;录</a></li>
+                {% else %}
+                <li style="margin-top:80px"><a href="/login" style="text-align:center">登&nbsp;&nbsp;&nbsp;&nbsp;录</a></li>
+                <li><a href="/register" style="text-align:center">注册</a></li>
+                <li><a href="/" style="text-align:center">搜索</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    <div class="content">
+        <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+        <div>
+        <div class="item block" style="margin-right:60px;margin-top:100px">
+            <div class="thumbs-wrapper">
+                <div class="thumbs">
+                   <center><a href={{ item.href }} target="_blank"> <img src={{ item.img }} height="200px" /> </a> </center>
+                </div>
+            </div>
+            <p class="subline"><a href={{ item.href }} target="_blank">{{ item.name }}</a></p>
+        </div>
+        <div id="main" style="height:500px;width:800px;margin-top:60px"></div>
+        </div>
+
+    </div>
+        <script type="text/javascript" src="/static/js/jquery-1.11.0.min.js"></script>
+         <!-- ECharts单文件引入 -->
+        <script src="/static/js/echarts-plain.js"></script>
+       <script src="/static/js/jquery.mmenu.min.all.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                $('nav#menu-left').mmenu({
+                    classes: 'mm-light'
+                });
+            });
+            // 基于准备好的dom，初始化echarts图表
+            var myChart = echarts.init(document.getElementById('main'));
+
+            datelist =  new Array()
+            {% for date in dates %}
+                datelist.push("{{date}}")
+            {% endfor %}
+            pricelist =  new Array()
+            {% for price in prices %}
+                pricelist.push("{{price}}")
+            {% endfor %}
+
+            var option = {
+                title : {
+                    text: '价格变化趋势图',
+                },
+                tooltip : {
+                    trigger: 'axis'
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+                        mark : {show: true},
+                        dataView : {show: true, readOnly: false},
+                        magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+                legend: {
+                    data:['价格']
+                },
+                calculable : true,
+                xAxis : [
+                    {
+                        type : 'category',
+                        boundaryGap : false,
+                        data : datelist
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value',
+                        axisLabel : {
+                            formatter: '{value} 元'
+                        },
+                        splitArea : {show : true}
+                    }
+                ],
+                series : [
+                    {
+                        name:'价格趋势',
+                        type:'line',
+                        itemStyle: {
+                            normal: {
+                                color: '#FF7F50',
+                                lineStyle: {
+                                    shadowColor : 'rgba(0,0,0,0.4)',
+                                    shadowBlur: 5,
+                                    shadowOffsetX: 3,
+                                    shadowOffsetY: 3
+                                }
+                            }
+                        },
+                        data:pricelist,
+                        markPoint : {
+
+                            data : [
+                                {type : 'max', name: '最高'},
+                                {type : 'min', name: '最低'}
+                            ]
+                        },
+                        markLine : {
+                            data : [
+                                {type : 'average', name: '平均'}
+                            ]
+                        }
+                    }
+
+                ]
+            };
+
+
+            // 为echarts对象加载数据
+            myChart.setOption(option);
+        </script>
+    </body>
+</html>
