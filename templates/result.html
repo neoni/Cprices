@@ -13,9 +13,8 @@
         <link rel="stylesheet" href="/static/css/menu.css" />
         <link rel="stylesheet" type="text/css" href="/static/css/button.css" />
     <body>
-        <div id="header">
+        <div id="header" style="position:fixed">
             <a href="#menu-left"></a>
-            Cprices
         </div>
         <nav id="menu-left">
             <ul>
@@ -150,6 +149,7 @@
                 $('nav#menu-left').mmenu({
                     classes: 'mm-light'
                 });
+
                     // the main container
                 var $GPContainer    = $('#container'),
                     // the articles (the thumbs)
@@ -492,17 +492,18 @@
                 GridPortfolio.init();
             });
             function generate(type,text) {
-                var n = noty({
-                    text        : text,
-                    type        : type,
-                    dismissQueue: false,
-                    layout      : 'center',
-                    theme       : 'defaultTheme'
-                });
-                console.log(type + ' - ' + n.options.id);
-                return n;
-            }
-             $(".tracked").click(function(){
+                    var n = noty({
+                        text        : text,
+                        type        : type,
+                        dismissQueue: false,
+                        layout      : 'center',
+                        theme       : 'defaultTheme'
+                    });
+                    console.log(type + ' - ' + n.options.id);
+                    return n;
+                }
+
+                $(".tracked").click(function(){
                     var url =  $(this).attr('act');
                     $.getJSON(url, {hrefs: $(this).attr('act-h'), col: $(this).attr('act-t'), img: $(this).attr('act-i'), names: $(this).attr('act-n'), price: $(this).attr('act-p')}, function(data){
                         if(data && data.codes == 'SUCCESS'){
@@ -520,6 +521,7 @@
                         }
                     });
                 });
+
         </script>
     </body>
 </html>

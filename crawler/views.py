@@ -94,6 +94,7 @@ def search(request):
     dangdanglist = []
     yhdlist = []
     taobaolist = []
+    threads = []
     keyword = request.GET.get("search", "")
     types = request.GET.get("filter", "")
     if types == "all":
@@ -101,14 +102,14 @@ def search(request):
         dangdang_t = DangdangThread(keyword)
         yhd_t = YhdThread(keyword)
         taobao_t = TaobaoThread(keyword)
-        amazon_t.start()
-        dangdang_t.start()
-        yhd_t.start()
-        taobao_t.start()
-        amazon_t.join()
-        dangdang_t.join()
-        yhd_t.join()
-        taobao_t.join()
+        threads.append(amazon_t)
+        threads.append(dangdang_t)
+        threads.append(yhd_t)
+        threads.append(taobao_t)
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
     elif types == "amazon":
         amazonlist = spider.amazon(keyword)
     elif types == "dangdang":
@@ -168,7 +169,8 @@ def detrack(request,item_id):
 def lists(request):
     if request.user.is_authenticated():
         items = Item.objects.filter(user=request.user)
-        return render_to_response('lists.html',{'items':items,'user':request.user})
+        updated_items = Item.objects.filter(is_updated=True)
+        return render_to_response('lists.html',{'items':items,'updated_items':updated_items,'user':request.user})
     else:
         return render_to_response('login.html',RequestContext(request))
 
@@ -179,11 +181,19 @@ def realupdate(request):
         items = Item.objects.filter(user=request.user)
         num = 0
         l = len(items)
+        threads = []
         while (num < l):
             update_t = UpdateThread(items[num:num+3])
+            threads.append(update_t)
             update_t.start()
             num = num + 3
-        return render_to_response('lists.html',{'items':items,'user':request.user})
+        for thread in threads:
+            thread.join()
+        updated_items = Item.objects.filter(is_updated=True)
+        for item in updated_items:
+            item.is_updated = False
+            item.save()
+        return render_to_response('lists.html',{'items':items,'updated_items':updated_items,'user':request.user})
     else:
         return render_to_response('login.html',RequestContext(request))
 
@@ -193,10 +203,17 @@ def detail(request,item_id):
         try:
             item = Item.objects.get(id=str(item_id))
             prices = item.prices.split(',')
+            maxP = 0;
+            minP = 10000000;
             for i in range(len(prices)):
                 prices[i] = float(prices[i])
+                if prices[i] < minP:
+                    minP = prices[i]
+                if prices[i] > maxP:
+                    maxP = prices[i]
             dates = item.dates.decode("utf-8").split(',')
-            return render_to_response('detail.html',{'item':item,'prices':prices,'dates':dates,'user':request.user})
+            return render_to_response('detail.html',{'item':item,'prices':prices,'dates':dates,'maxP':maxP,
+                                                     'minP':minP, 'user':request.user})
         except Item.DoesNotExist:
             return HttpResponseRedirect("/lists", RequestContext(request))
     else:

@@ -10,3 +10,5 @@ class Item(models.Model):
     prices = models.CharField(max_length=400, blank=True, null=True)
     dates = models.CharField(max_length=400, blank=True, null=True)
     user = models.ForeignKey(User)
+    is_updated = models.BooleanField(default=False)
+    updated_s = models.CharField(max_length=300, blank=True, null=True)

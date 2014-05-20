@@ -106,3 +106,15 @@ def changepasswd(request):
             return render_to_response('changepwd.html',RequestContext(request))
     else:
         return HttpResponseRedirect("/login")
+
+
+def verify(request):
+    username = request.GET.get('name', '')
+    password = request.GET.get('password', '')
+    clientId = request.GET.get('clientId', '')
+    user = auth.authenticate(username=username, password=password)
+    if user is not None and user.is_active:
+
+        return HttpResponse(simplejson.dumps({'codes':'SUCCESS'}))
+    else:
+        return HttpResponse(simplejson.dumps({'codes':'LOGIN'}))

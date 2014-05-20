@@ -5,6 +5,7 @@ import urllib2
 
 
 def amazon_update(item):
+    print item.id
     html = urllib2.urlopen(item.href).read()
     p1 = html.find('特价:')
     if p1 == -1:
@@ -21,7 +22,11 @@ def amazon_update(item):
     else:
         price = price[1:9].strip()
     oldp = item.prices
+    if not oldp:
+        oldp = ''
     oldd = item.dates
+    if not oldd:
+        oldd = ''
     m = str(datetime.today().month)
     if len(m) < 2:
         m = '0' + m
@@ -29,7 +34,7 @@ def amazon_update(item):
     if len(d) < 2:
         d = '0' + d
     dates = m + '.' + d
-    prices = item.prices.split(',')
+    prices = oldp.split(',')
     if prices[-1] != price:
         if (len(prices) < 20):
             oldp = oldp + ',' + price
@@ -39,13 +44,22 @@ def amazon_update(item):
             oldp = oldp[pos+1:] + ',' + price
             pos = oldd.find(',')
             oldd = oldd[pos+1:] + ',' + dates
+        if prices[-1] < price:
+            items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
+                              ' 价格从 ' + prices[-1] + ' 上涨到 ' + price + "</a>"
+        else:
+            items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
+                              ' 价格从 ' + prices[-1] + ' 下降到 ' + price + "</a>"
         item.prices = oldp
         item.dates = oldd
+        items.is_updated = True
+
         item.save()
 
 
 
 def dangdang_update(item):
+    print item.id
     html = urllib2.urlopen(item.href).read()
     soup = BeautifulSoup(html)
     price = soup.find(attrs={'class':'d_price'}).get_text().strip()
@@ -54,7 +68,11 @@ def dangdang_update(item):
     else:
         price = price[1:9].strip()
     oldp = item.prices
+    if not oldp:
+        oldp = ''
     oldd = item.dates
+    if not oldd:
+        oldd = ''
     m = str(datetime.today().month)
     if len(m) < 2:
         m = '0' + m
@@ -62,7 +80,7 @@ def dangdang_update(item):
     if len(d) < 2:
         d = '0' + d
     dates = m + '.' + d
-    prices = item.prices.split(',')
+    prices = oldp.split(',')
     if prices[-1] != price:
         if (len(prices) < 20):
             oldp = oldp + ',' + price
@@ -72,14 +90,22 @@ def dangdang_update(item):
             oldp = oldp[pos+1:] + ',' + price
             pos = oldd.find(',')
             oldd = oldd[pos+1:] + ',' + dates
+        if prices[-1] < price:
+            items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
+                              ' 价格从 ' + prices[-1] + ' 上涨到 ' + price + "</a>"
+        else:
+            items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
+                              ' 价格从 ' + prices[-1] + ' 下降到 ' + price + "</a>"
         item.prices = oldp
         item.dates = oldd
+        items.is_updated = True
         item.save()
 
 
 
 
 def taobao_update(item):
+    print item.id
     url = item.href
     pos = url.find('id=')
     item_id = url[pos+3:pos+14]
@@ -118,7 +144,11 @@ def taobao_update(item):
         else:
             price = price[0:9].strip()
         oldp = item.prices
+        if not oldp:
+            oldp = ''
         oldd = item.dates
+        if not oldd:
+            oldd = ''
         m = str(datetime.today().month)
         if len(m) < 2:
             m = '0' + m
@@ -126,7 +156,7 @@ def taobao_update(item):
         if len(d) < 2:
             d = '0' + d
         dates = m + '.' + d
-        prices = item.prices.split(',')
+        prices = oldp.split(',')
         if prices[-1] != price:
             if (len(prices) < 20):
                 oldp = oldp + ',' + price
@@ -136,13 +166,21 @@ def taobao_update(item):
                 oldp = oldp[pos+1:] + ',' + price
                 pos = oldd.find(',')
                 oldd = oldd[pos+1:] + ',' + dates
+            if prices[-1] < price:
+                items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
+                                  ' 价格从 ' + prices[-1] + ' 上涨到 ' + price + "</a>"
+            else:
+                items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
+                                  ' 价格从 ' + prices[-1] + ' 下降到 ' + price + "</a>"
             item.prices = oldp
             item.dates = oldd
+            items.is_updated = True
             item.save()
 
 
 
 def yhd_update(item):
+    print item.id
     html = urllib2.urlopen(item.href).read()
     soup = BeautifulSoup(html)
     price = soup.find(attrs={'class':'price_l'})
@@ -152,7 +190,11 @@ def yhd_update(item):
     else:
         price = price[1:9].strip()
     oldp = item.prices
+    if not oldp:
+        oldp = ''
     oldd = item.dates
+    if not oldd:
+        oldd = ''
     m = str(datetime.today().month)
     if len(m) < 2:
         m = '0' + m
@@ -160,7 +202,7 @@ def yhd_update(item):
     if len(d) < 2:
         d = '0' + d
     dates = m + '.' + d
-    prices = item.prices.split(',')
+    prices = oldp.split(',')
     if prices[-1] != price:
         if (len(prices) < 20):
             oldp = oldp + ',' + price
@@ -170,7 +212,14 @@ def yhd_update(item):
             oldp = oldp[pos+1:] + ',' + price
             pos = oldd.find(',')
             oldd = oldd[pos+1:] + ',' + dates
+        if prices[-1] < price:
+            items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
+                              ' 价格从 ' + prices[-1] + ' 上涨到 ' + price + "</a>"
+        else:
+            items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
+                              ' 价格从 ' + prices[-1] + ' 下降到 ' + price + "</a>"
         item.prices = oldp
         item.dates = oldd
+        items.is_updated = True
         item.save()
 
