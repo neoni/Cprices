@@ -73,6 +73,28 @@
                     classes: 'mm-light'
                 });
 
+               function generate(type,text) {
+                    var n = noty({
+                        text        : text,
+                        type        : type,
+                        dismissQueue: true,
+                        layout      : 'top',
+                        theme       : 'defaultTheme',
+                        maxVisible  : 20
+                    });
+                    return n;
+                }
+
+                updatedlist =  new Array()
+                {% for item in updated_items %}
+                    updatedlist.push("{{item.updated_s}}");
+                {% endfor %}
+                for (i = 0; i < updatedlist.length; i++)
+                {
+                    var notice = generate('warning',updatedlist[i]);
+                }
+
+
                     // the main container
                 var $GPContainer    = $('#container'),
                     // the articles (the thumbs)
@@ -414,22 +436,6 @@
 
                 GridPortfolio.init();
             });
-
-            function generate(type,text) {
-                var n = noty({
-                    text        : text,
-                    type        : type,
-                    dismissQueue: false,
-                    layout      : 'center',
-                    theme       : 'defaultTheme'
-                });
-                console.log(type + ' - ' + n.options.id);
-                return n;
-            }
-
-            {% for item in updated_items %}
-                var notice = generate('warning',item.updated_s);
-            {% endfor %}
 
 
         </script>

@@ -170,6 +170,9 @@ def lists(request):
     if request.user.is_authenticated():
         items = Item.objects.filter(user=request.user)
         updated_items = Item.objects.filter(is_updated=True)
+        for item in updated_items:
+            item.is_updated = False
+            item.save()
         return render_to_response('lists.html',{'items':items,'updated_items':updated_items,'user':request.user})
     else:
         return render_to_response('login.html',RequestContext(request))

@@ -1,11 +1,12 @@
 # -*- coding:utf-8 -*-
 from bs4 import BeautifulSoup
+from accounts.models import ClientId
+from getui import gt_push
 from datetime import *
 import urllib2
 
 
 def amazon_update(item):
-    print item.id
     html = urllib2.urlopen(item.href).read()
     p1 = html.find('特价:')
     if p1 == -1:
@@ -45,21 +46,23 @@ def amazon_update(item):
             pos = oldd.find(',')
             oldd = oldd[pos+1:] + ',' + dates
         if prices[-1] < price:
-            items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
-                              ' 价格从 ' + prices[-1] + ' 上涨到 ' + price + "</a>"
+            item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
+                              u' 价格从 ' + prices[-1] + u' 上涨到 ' + price + u"</a>"
         else:
-            items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
-                              ' 价格从 ' + prices[-1] + ' 下降到 ' + price + "</a>"
+            item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
+                              u' 价格从 ' + prices[-1] + u' 下降到 ' + price + u"</a>"
         item.prices = oldp
         item.dates = oldd
-        items.is_updated = True
-
+        item.is_updated = True
         item.save()
+        cids = ClientId.objects.filter(user=item.user)
+        for cid in cids:
+            gt_push.pushMessageToSingle(cid,item.updated_s)
+
 
 
 
 def dangdang_update(item):
-    print item.id
     html = urllib2.urlopen(item.href).read()
     soup = BeautifulSoup(html)
     price = soup.find(attrs={'class':'d_price'}).get_text().strip()
@@ -91,21 +94,22 @@ def dangdang_update(item):
             pos = oldd.find(',')
             oldd = oldd[pos+1:] + ',' + dates
         if prices[-1] < price:
-            items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
-                              ' 价格从 ' + prices[-1] + ' 上涨到 ' + price + "</a>"
+            item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
+                              u' 价格从 ' + prices[-1] + u' 上涨到 ' + price + u"</a>"
         else:
-            items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
-                              ' 价格从 ' + prices[-1] + ' 下降到 ' + price + "</a>"
+            item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
+                              u' 价格从 ' + prices[-1] + u' 下降到 ' + price + u"</a>"
         item.prices = oldp
         item.dates = oldd
-        items.is_updated = True
+        item.is_updated = True
         item.save()
-
+        cids = ClientId.objects.filter(user=item.user)
+        for cid in cids:
+            gt_push.pushMessageToSingle(cid,item.updated_s)
 
 
 
 def taobao_update(item):
-    print item.id
     url = item.href
     pos = url.find('id=')
     item_id = url[pos+3:pos+14]
@@ -167,20 +171,22 @@ def taobao_update(item):
                 pos = oldd.find(',')
                 oldd = oldd[pos+1:] + ',' + dates
             if prices[-1] < price:
-                items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
-                                  ' 价格从 ' + prices[-1] + ' 上涨到 ' + price + "</a>"
+                item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
+                                  u' 价格从 ' + prices[-1] + u' 上涨到 ' + price + u"</a>"
             else:
-                items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
-                                  ' 价格从 ' + prices[-1] + ' 下降到 ' + price + "</a>"
+                item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
+                                  u' 价格从 ' + prices[-1] + u' 下降到 ' + price + u"</a>"
             item.prices = oldp
             item.dates = oldd
-            items.is_updated = True
+            item.is_updated = True
             item.save()
+            cids = ClientId.objects.filter(user=item.user)
+            for cid in cids:
+                gt_push.pushMessageToSingle(cid,item.updated_s)
 
 
 
 def yhd_update(item):
-    print item.id
     html = urllib2.urlopen(item.href).read()
     soup = BeautifulSoup(html)
     price = soup.find(attrs={'class':'price_l'})
@@ -213,13 +219,16 @@ def yhd_update(item):
             pos = oldd.find(',')
             oldd = oldd[pos+1:] + ',' + dates
         if prices[-1] < price:
-            items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
-                              ' 价格从 ' + prices[-1] + ' 上涨到 ' + price + "</a>"
+            item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
+                              u' 价格从 ' + prices[-1] + u' 上涨到 ' + price + u"</a>"
         else:
-            items.updated_s = "<a target='_blank' href='/detail/" + item.id + "' >" + item.title[0:20] + \
-                              ' 价格从 ' + prices[-1] + ' 下降到 ' + price + "</a>"
+            item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
+                              u' 价格从 ' + prices[-1] + u' 下降到 ' + price + u"</a>"
         item.prices = oldp
         item.dates = oldd
-        items.is_updated = True
+        item.is_updated = True
         item.save()
+        cids = ClientId.objects.filter(user=item.user)
+        for cid in cids:
+            gt_push.pushMessageToSingle(cid,item.updated_s)
 

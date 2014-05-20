@@ -1,10 +1,13 @@
 # -*- coding:UTF-8 -*-
 from django.template import RequestContext
 from django.shortcuts import render_to_response
+from django.http import HttpResponse
+from django.utils import simplejson
 from django.contrib import auth
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from accounts.models import ClientId
 
 
 def home(request):
@@ -111,10 +114,26 @@ def changepasswd(request):
 def verify(request):
     username = request.GET.get('name', '')
     password = request.GET.get('password', '')
-    clientId = request.GET.get('clientId', '')
+    cid = request.GET.get('cid', '')
     user = auth.authenticate(username=username, password=password)
     if user is not None and user.is_active:
-
+        try:
+            client = ClientId.objects.get(cid=cid,user=user)
+        except ClientId.DoesNotExist:
+            client = ClientId(cid=cid,user=user)
+            client.save()
         return HttpResponse(simplejson.dumps({'codes':'SUCCESS'}))
     else:
         return HttpResponse(simplejson.dumps({'codes':'LOGIN'}))
+
+
+def logoff(request):
+    username = request.GET.get('name', '')
+    cid = request.GET.get('cid', '')
+    try:
+        user = User.objects.get(username=username)
+        client = ClientId.objects.get(cid=cid,user=user)
+        client.delete()
+        return HttpResponse(simplejson.dumps({'codes':'LOGOFF'}))
+    except User.DoesNotExist, ClientId.DoesNotExist:
+        return HttpResponse(simplejson.dumps({'codes':'None'}))

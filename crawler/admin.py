@@ -1,3 +1,7 @@
 from django.contrib import admin
+from crawler import models
 
-# Register your models here.
+class ItemAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(models.Item, ItemAdmin)

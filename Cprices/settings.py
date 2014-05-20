@@ -40,6 +40,10 @@ INSTALLED_APPS = (
     'south',
     'accounts',
     'crawler',
+    'getui',
+    'igetui',
+    'google',
+    'protobuf',
 )
 
 MIDDLEWARE_CLASSES = (
