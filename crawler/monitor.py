@@ -18,10 +18,20 @@ def amazon_update(item):
     tt = html[p2:p3+5]
     soup = BeautifulSoup(tt)
     price = soup.get_text().strip()
-    if ( (cmp(price[0],'0')<0) or (cmp(price[0],'9')>0) ):
-        price = price[1:10].strip()
-    else:
-        price = price[1:9].strip()
+    index = 0
+    for p in price:
+        if ( (cmp(p,'0')<0) or (cmp(p,'9')>0) ):
+            index += 1
+        else:
+            price = price[index:].strip()
+            break
+    index = 0
+    for p in price:
+        if ( (p.isdigit()) or (p == '.')):
+            index += 1
+        else:
+            price = price[:index].strip()
+            break
     oldp = item.prices
     if not oldp:
         oldp = ''
@@ -46,18 +56,16 @@ def amazon_update(item):
             pos = oldd.find(',')
             oldd = oldd[pos+1:] + ',' + dates
         if prices[-1] < price:
-            item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
-                              u' 价格从 ' + prices[-1] + u' 上涨到 ' + price + u"</a>"
+            item.updated_s  = item.name[0:20] + u' 价格从 ' + prices[-1] + u' 上涨到 ' + price
         else:
-            item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
-                              u' 价格从 ' + prices[-1] + u' 下降到 ' + price + u"</a>"
+            item.updated_s  = item.name[0:20] + u' 价格从 ' + prices[-1] + u' 下降到 ' + price
         item.prices = oldp
         item.dates = oldd
         item.is_updated = True
         item.save()
         cids = ClientId.objects.filter(user=item.user)
         for cid in cids:
-            gt_push.pushMessageToSingle(cid,item.updated_s)
+            gt_push.pushMessageToSingle(cid,item.updated_s,item.href)
 
 
 
@@ -66,10 +74,20 @@ def dangdang_update(item):
     html = urllib2.urlopen(item.href).read()
     soup = BeautifulSoup(html)
     price = soup.find(attrs={'class':'d_price'}).get_text().strip()
-    if ( (cmp(price[0],'0')<0) or (cmp(price[0],'9')>0) ):
-        price = price[1:10].strip()
-    else:
-        price = price[1:9].strip()
+    index = 0
+    for p in price:
+        if ( (cmp(p,'0')<0) or (cmp(p,'9')>0) ):
+            index += 1
+        else:
+            price = price[index:].strip()
+            break
+    index = 0
+    for p in price:
+        if ( (p.isdigit()) or (p == '.')):
+            index += 1
+        else:
+            price = price[:index].strip()
+            break
     oldp = item.prices
     if not oldp:
         oldp = ''
@@ -94,18 +112,16 @@ def dangdang_update(item):
             pos = oldd.find(',')
             oldd = oldd[pos+1:] + ',' + dates
         if prices[-1] < price:
-            item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
-                              u' 价格从 ' + prices[-1] + u' 上涨到 ' + price + u"</a>"
+            item.updated_s  = item.name[0:20] + u' 价格从 ' + prices[-1] + u' 上涨到 ' + price
         else:
-            item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
-                              u' 价格从 ' + prices[-1] + u' 下降到 ' + price + u"</a>"
+            item.updated_s  = item.name[0:20] + u' 价格从 ' + prices[-1] + u' 下降到 ' + price
         item.prices = oldp
         item.dates = oldd
         item.is_updated = True
         item.save()
         cids = ClientId.objects.filter(user=item.user)
         for cid in cids:
-            gt_push.pushMessageToSingle(cid,item.updated_s)
+            gt_push.pushMessageToSingle(cid,item.updated_s,item.href)
 
 
 
@@ -143,10 +159,20 @@ def taobao_update(item):
             price = html[pos1+7:pos2]
 
     if price != '-1':
-        if ( (cmp(price[0],'0')<0) or (cmp(price[0],'9')>0) ):
-            price = price[1:10].strip()
-        else:
-            price = price[0:9].strip()
+        index = 0
+        for p in price:
+            if ( (cmp(p,'0')<0) or (cmp(p,'9')>0) ):
+                index += 1
+            else:
+                price = price[index:].strip()
+                break
+        index = 0
+        for p in price:
+            if ( (p.isdigit()) or (p == '.')):
+                index += 1
+            else:
+                price = price[:index].strip()
+                break
         oldp = item.prices
         if not oldp:
             oldp = ''
@@ -171,18 +197,16 @@ def taobao_update(item):
                 pos = oldd.find(',')
                 oldd = oldd[pos+1:] + ',' + dates
             if prices[-1] < price:
-                item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
-                                  u' 价格从 ' + prices[-1] + u' 上涨到 ' + price + u"</a>"
+                item.updated_s  = item.name[0:20] + u' 价格从 ' + prices[-1] + u' 上涨到 ' + price
             else:
-                item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
-                                  u' 价格从 ' + prices[-1] + u' 下降到 ' + price + u"</a>"
+                item.updated_s  = item.name[0:20] + u' 价格从 ' + prices[-1] + u' 下降到 ' + price
             item.prices = oldp
             item.dates = oldd
             item.is_updated = True
             item.save()
             cids = ClientId.objects.filter(user=item.user)
             for cid in cids:
-                gt_push.pushMessageToSingle(cid,item.updated_s)
+                gt_push.pushMessageToSingle(cid,item.updated_s,item.href)
 
 
 
@@ -191,10 +215,20 @@ def yhd_update(item):
     soup = BeautifulSoup(html)
     price = soup.find(attrs={'class':'price_l'})
     price = price.get_text().strip()
-    if ( (cmp(price[0],'0')<0) or (cmp(price[0],'9')>0) ):
-        price = price[1:10].strip()
-    else:
-        price = price[1:9].strip()
+    index = 0
+    for p in price:
+        if ( (cmp(p,'0')<0) or (cmp(p,'9')>0) ):
+            index += 1
+        else:
+            price = price[index:].strip()
+            break
+    index = 0
+    for p in price:
+        if ( (p.isdigit()) or (p == '.')):
+            index += 1
+        else:
+            price = price[:index].strip()
+            break
     oldp = item.prices
     if not oldp:
         oldp = ''
@@ -219,16 +253,14 @@ def yhd_update(item):
             pos = oldd.find(',')
             oldd = oldd[pos+1:] + ',' + dates
         if prices[-1] < price:
-            item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
-                              u' 价格从 ' + prices[-1] + u' 上涨到 ' + price + u"</a>"
+            item.updated_s  = item.name[0:20] + u' 价格从 ' + prices[-1] + u' 上涨到 ' + price
         else:
-            item.updated_s = u"<a target='_blank' href='/detail/" + str(item.id) + u"'>" + item.name[0:20] + \
-                              u' 价格从 ' + prices[-1] + u' 下降到 ' + price + u"</a>"
+            item.updated_s  = item.name[0:20] + u' 价格从 ' + prices[-1] + u' 下降到 ' + price
         item.prices = oldp
         item.dates = oldd
         item.is_updated = True
         item.save()
         cids = ClientId.objects.filter(user=item.user)
         for cid in cids:
-            gt_push.pushMessageToSingle(cid,item.updated_s)
+            gt_push.pushMessageToSingle(cid,item.updated_s,item.href)
 

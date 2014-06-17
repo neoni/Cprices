@@ -21,6 +21,7 @@ def login(request):
         if user is not None and user.is_active:
             # Correct password, and the user is marked "active"
             auth.login(request, user)
+            request.session.set_expiry(30*60)
             return HttpResponseRedirect("/", RequestContext(request))
         else:
             errors = u"账户不存在或密码错误"
@@ -53,6 +54,7 @@ def register(request):
         user = auth.authenticate(username=username, password=password)
         if user is not None and user.is_active:
             auth.login(request, user)
+            request.session.set_expiry(30*60)
         return HttpResponseRedirect("/", RequestContext(request))
     else:
         return render_to_response('register.html', RequestContext(request))
@@ -111,29 +113,25 @@ def changepasswd(request):
         return HttpResponseRedirect("/login")
 
 
-def verify(request):
-    username = request.GET.get('name', '')
-    password = request.GET.get('password', '')
-    cid = request.GET.get('cid', '')
+def verify(request,username,password,cid):
     user = auth.authenticate(username=username, password=password)
+    if len(cid) != 32:
+        return HttpResponse('ERROR')
     if user is not None and user.is_active:
         try:
             client = ClientId.objects.get(cid=cid,user=user)
         except ClientId.DoesNotExist:
             client = ClientId(cid=cid,user=user)
             client.save()
-        return HttpResponse(simplejson.dumps({'codes':'SUCCESS'}))
+        return HttpResponse('SUCCESS')
     else:
-        return HttpResponse(simplejson.dumps({'codes':'LOGIN'}))
+        return HttpResponse('ERROR')
 
 
-def logoff(request):
-    username = request.GET.get('name', '')
-    cid = request.GET.get('cid', '')
+def logoff(request,cid):
     try:
-        user = User.objects.get(username=username)
-        client = ClientId.objects.get(cid=cid,user=user)
+        client = ClientId.objects.get(cid=cid)
         client.delete()
-        return HttpResponse(simplejson.dumps({'codes':'LOGOFF'}))
-    except User.DoesNotExist, ClientId.DoesNotExist:
-        return HttpResponse(simplejson.dumps({'codes':'None'}))
+        return HttpResponse('SUCCESS')
+    except ClientId.DoesNotExist:
+        return HttpResponse('None')

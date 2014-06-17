@@ -21,6 +21,6 @@ urlpatterns = patterns('',
     url(r'track/$', 'crawler.views.track'),
     url(r'detrack/(?P<item_id>\d+)', 'crawler.views.detrack'),
     url(r'search/$', 'crawler.views.search'),
-    url(r'sever/android/verify$', 'accounts.views.verify'),
-    url(r'sever/android/logoff$', 'accounts.views.logoff'),
+    url(r'server/android/verify/(?P<username>.+)/(?P<password>.+)/(?P<cid>.+)$', 'accounts.views.verify'),
+    url(r'server/android/logoff/(?P<cid>.+)$', 'accounts.views.logoff'),
 )

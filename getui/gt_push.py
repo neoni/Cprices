@@ -29,10 +29,9 @@ os.environ['needDetails'] = 'false'
 APPKEY = "P0UD8dBDTD9semaSXOdfo2"
 APPID = "78ykCWBkrV969zdfpeawg5"
 MASTERSECRET = "c8N3e99oXQ7JqfhiLEthe1"
-CID = ""
 HOST = 'http://sdk.open.api.igexin.com/apiex.htm'
 
-def pushMessageToSingle(client,text):
+def pushMessageToSingle(client,text,url):
     push = IGeTui(HOST, APPKEY, MASTERSECRET)
     #消息模版：
     #1.TransmissionTemplate:透传功能模板
@@ -40,12 +39,13 @@ def pushMessageToSingle(client,text):
     #3.NotificationTemplate：通知透传功能模板
     #4.NotyPopLoadTemplate：通知弹框下载功能模板
 
-    template = NotificationTemplateDemo()
+    template = LinkTemplateDemo()
     #template = LinkTemplateDemo()
     #template = TransmissionTemplateDemo()
     template.text = text
-    template.title = '价格更新了！'
+    template.title = u'价格更新了！'
     template.transmissionContent = text
+    template.url = url
     #template = NotyPopLoadTemplateDemo()
 
     message = IGtSingleMessage()
@@ -63,7 +63,7 @@ def pushMessageToSingle(client,text):
     print ret
 
 
-def pushMessageToList():
+def pushMessageToList(client,text):
     push = IGeTui(HOST, APPKEY, MASTERSECRET)
 
     #消息模版：
@@ -73,9 +73,18 @@ def pushMessageToList():
     #4.NotyPopLoadTemplate：通知弹框下载功能模板
 
     #template = NotificationTemplateDemo()
-    template = LinkTemplateDemo()
+    #template = LinkTemplateDemo()
     #template = TransmissionTemplateDemo()
     #template = NotyPopLoadTemplateDemo()
+    template = NotificationTemplateDemo()
+    #template = LinkTemplateDemo()
+    #template = TransmissionTemplateDemo()
+    template.text = text
+    template.title = '价格更新了！'
+    template.transmissionContent = text
+
+    #template = NotyPopLoadTemplateDemo()
+
 
     message = IGtListMessage()
     message.data = template
@@ -127,7 +136,7 @@ def NotificationTemplateDemo():
     template = NotificationTemplate()
     template.appId = APPID
     template.appKey = APPKEY
-    template.transmissionType = 1
+    template.transmissionType = 2
     template.transmissionContent = u"请填入透传内容"
     template.title = u"请填入通知标题"
     template.text = u"请填入通知内容"
@@ -223,3 +232,4 @@ def stopTask():
 
 #任务停止功能接口
 #stopTask()
+

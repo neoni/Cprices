@@ -73,9 +73,9 @@
                     classes: 'mm-light'
                 });
 
-               function generate(type,text) {
+               function generate(type,text,id) {
                     var n = noty({
-                        text        : text,
+                        text        : "<a target='_blank' href='/detail/"+id+"'>"+text+"</a>",
                         type        : type,
                         dismissQueue: true,
                         layout      : 'top',
@@ -86,12 +86,14 @@
                 }
 
                 updatedlist =  new Array()
+                idlist = new Array()
                 {% for item in updated_items %}
                     updatedlist.push("{{item.updated_s}}");
+                    idlist.push("{{item.id}}");
                 {% endfor %}
                 for (i = 0; i < updatedlist.length; i++)
                 {
-                    var notice = generate('warning',updatedlist[i]);
+                    var notice = generate('warning',updatedlist[i],idlist[i]);
                 }
 
 

@@ -22,10 +22,9 @@ SECRET_KEY = '1j@3$nx(74#)hi!0^^t$1xd&9=h&ikyhaf!5_urj=em-r^a#k#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
-
 ALLOWED_HOSTS = []
 
+TEMPLATE_DEBUG = True
 
 # Application definition
 
